@@ -4,7 +4,6 @@ import * as playerActions from "../../redux/actions/playerActions";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import PlayerForm from "./PlayerForm";
-import { newPlayer } from "../../../tools/mockData";
 import { toast } from "react-toastify";
 
 function ManagePlayerPage(props) {
@@ -83,6 +82,10 @@ export function getPlayerById(players, id) {
 
 function mapStateToProps(state, ownProps) {
   const id = ownProps.match.params.id;
+  const newPlayer = {
+    id: null,
+    name: ""
+  };
   const player =
     id && state.players.length > 0
       ? getPlayerById(state.players, id)

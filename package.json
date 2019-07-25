@@ -2,10 +2,7 @@
   "name": "rpg-session-admin-react",
   "description": "Rpg session administration, a place to roll dice and play rpg with players remotely separated",
   "scripts": {
-    "start": "run-p start:dev start:api",
-    "start:dev": "webpack-dev-server --config webpack.config.dev.js --port 3000",
-    "prestart:api": "node tools/createMockDb.js",
-    "start:api": "node tools/apiServer.js"
+    "start": "webpack-dev-server --config webpack.config.dev.js --port 3000"
   },
   "dependencies": {
     "bootstrap": "4.3.1",
