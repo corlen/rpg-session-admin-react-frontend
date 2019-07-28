@@ -9,6 +9,7 @@ import SessionsPage from "./sessions/SessionsPage";
 import ShowSessionPage from "./sessions/ShowSessionPage";
 import ManagePlayerPage from "./players/ManagePlayerPage";
 import ManageSessionPage from "./sessions/ManageSessionPage";
+import SessionRunPage from "./sessions/SessionRunPage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -22,6 +23,7 @@ function App() {
         <Route path="/sessions" component={SessionsPage} />
         <Route path="/session/:id" component={ShowSessionPage} />
         <Route path="/session" component={ManageSessionPage} />
+        <Route path="/play/:id" component={SessionRunPage} />
         <Route path="/players" component={PlayersPage} />
         <Route path="/player/:id" component={ManagePlayerPage} />
         <Route path="/player" component={ManagePlayerPage} />
