@@ -1,4 +1,6 @@
 export default {
   players: [],
-  apiCallsInProgress: 0
+  apiCallsInProgress: 0,
+  sessions: [],
+  session: {}
 };

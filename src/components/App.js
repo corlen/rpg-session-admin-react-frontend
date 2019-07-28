@@ -6,7 +6,9 @@ import Header from "./common/Header";
 import PageNotFound from "./PageNotFound";
 import PlayersPage from "./players/PlayersPage";
 import SessionsPage from "./sessions/SessionsPage";
+import ShowSessionPage from "./sessions/ShowSessionPage";
 import ManagePlayerPage from "./players/ManagePlayerPage";
+import ManageSessionPage from "./sessions/ManageSessionPage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -18,6 +20,8 @@ function App() {
         <Route exact path="/" component={HomePage} />
         <Route path="/about" component={AboutPage} />
         <Route path="/sessions" component={SessionsPage} />
+        <Route path="/session/:id" component={ShowSessionPage} />
+        <Route path="/session" component={ManageSessionPage} />
         <Route path="/players" component={PlayersPage} />
         <Route path="/player/:id" component={ManagePlayerPage} />
         <Route path="/player" component={ManagePlayerPage} />
