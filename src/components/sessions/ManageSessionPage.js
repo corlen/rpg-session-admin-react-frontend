@@ -32,7 +32,6 @@ function ManageSessionPage(props) {
   }, [props.session]);
 
   function handleChange(event) {
-    console.log(event.target.type);
     const { name, value } = event.target;
     if (event.target.type === "text") {
       setSession(prevSession => ({
@@ -52,10 +51,11 @@ function ManageSessionPage(props) {
   }
 
   function formIsValid() {
-    const { description } = session;
+    const { description, players } = session;
     const errors = {};
-
+    console.log(session);
     if (!description) errors.description = "Description is required";
+    if (!players.length > 0) errors.players = "At least one player is required";
 
     setErrors(errors);
     return Object.keys(errors).length === 0;
@@ -106,7 +106,8 @@ function mapStateToProps(state, ownProps) {
   const id = ownProps.match.params.id;
   const newSession = {
     id: null,
-    description: ""
+    description: "",
+    players: []
   };
   const session =
     id && state.sessions.length > 0

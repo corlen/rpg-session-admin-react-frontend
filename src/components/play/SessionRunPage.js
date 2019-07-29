@@ -44,12 +44,12 @@ function SessionRunPage(props) {
       });
     }
 
-    const id = setInterval(() => {
+    const polling = setInterval(() => {
       rollActions.loadRolls(session.id).catch(error => {
         alert("loading rolls failed" + error);
       });
-    }, 5000);
-    intervalRef.current = id;
+    }, 4000);
+    intervalRef.current = polling;
     return () => {
       clearInterval(intervalRef.current);
     };
@@ -62,14 +62,15 @@ function SessionRunPage(props) {
   function handleRollSubmit(e) {
     e.preventDefault();
     //if (!formIsValid()) return;
-    const roll = {
+    const roll1 = {
       dieFace: 10,
       quantity: 3,
       bonusIncrement: -5,
       playerId: 1,
-      sessionId: 1
+      sessionId: 4
     };
-    rollActions.saveRoll(roll).then(() => {
+    console.log(props);
+    rollActions.saveRoll(roll1).then(() => {
       toast.success("Dice rolled!");
       rollActions.loadRolls(session.id).catch(error => {
         alert("loading rolls failed" + error);
@@ -87,7 +88,7 @@ function SessionRunPage(props) {
     return 0;
   }
 
-  return sessions.length === 0 || players.length === 0 || rolls.length === 0 ? (
+  return sessions.length === 0 || players.length === 0 ? (
     <Spinner />
   ) : (
     <div>
@@ -166,22 +167,26 @@ function SessionRunPage(props) {
       <div className="card mt-2">
         <div className="card-body">
           <h5 className="card-title">Last rolls: </h5>
-          <div className="card-text">
-            <ul>
-              {rolls.sort(sortRollsByDateRolled).map(roll => {
-                return (
-                  <li key={roll.id} className="mb-1">
-                    <mark>{getPlayerById(players, roll.playerId).name}</mark>{" "}
-                    rolled {roll.quantity}d{roll.dieFace} (
-                    <strong>{roll.rolledDice.join(", ")}</strong>) and sum is:{" "}
-                    <strong>{roll.sum}</strong>. Max value was:{" "}
-                    <font color="blue">{roll.maxValue}</font> and Min value was:{" "}
-                    <font color="red">{roll.minValue}</font>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+          {rolls.length > 0 ? (
+            <div className="card-text">
+              <ul>
+                {rolls.sort(sortRollsByDateRolled).map(roll => {
+                  return (
+                    <li key={roll.id} className="mb-1">
+                      <mark>{getPlayerById(players, roll.playerId).name}</mark>{" "}
+                      rolled {roll.quantity}d{roll.dieFace} (
+                      <strong>{roll.rolledDice.join(", ")}</strong>) and sum is:{" "}
+                      <strong>{roll.sum}</strong>. Max value was:{" "}
+                      <font color="blue">{roll.maxValue}</font> and Min value
+                      was: <font color="red">{roll.minValue}</font>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ) : (
+            <div />
+          )}
         </div>
       </div>
     </div>
