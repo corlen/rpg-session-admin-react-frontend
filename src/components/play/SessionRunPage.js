@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import * as sessionActions from "../../redux/actions/sessionActions";
@@ -21,6 +21,8 @@ function SessionRunPage(props) {
   const [session, setSession] = useState({ ...props.session });
   const [playerSelected, setPlayerSelected] = useState(0);
 
+  const intervalRef = useRef();
+
   useEffect(() => {
     if (sessions.length === 0) {
       sessionActions.loadSessions().catch(error => {
@@ -41,6 +43,16 @@ function SessionRunPage(props) {
         alert("loading rolls failed" + error);
       });
     }
+
+    const id = setInterval(() => {
+      rollActions.loadRolls(session.id).catch(error => {
+        alert("loading rolls failed" + error);
+      });
+    }, 5000);
+    intervalRef.current = id;
+    return () => {
+      clearInterval(intervalRef.current);
+    };
   }, [props.session]);
 
   function handlePlayerSelectionDefault(e) {
