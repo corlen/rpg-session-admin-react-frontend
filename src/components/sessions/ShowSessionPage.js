@@ -3,11 +3,19 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import * as sessionActions from "../../redux/actions/sessionActions";
 import * as playerActions from "../../redux/actions/playerActions";
+import * as rollActions from "../../redux/actions/rollActions";
 import { bindActionCreators } from "redux";
 import Spinner from "../common/Spinner";
 
 function ShowSessionPage(props) {
-  const { sessions, sessionActions, playerActions, players } = props;
+  const {
+    sessions,
+    sessionActions,
+    playerActions,
+    players,
+    rollActions,
+    rolls
+  } = props;
 
   const [session, setSession] = useState({ ...props.session });
 
@@ -23,10 +31,28 @@ function ShowSessionPage(props) {
 
     if (players.length === 0) {
       playerActions.loadPlayers().catch(error => {
+        console.log("Loading players failed " + error);
         alert("loading players failed" + error);
       });
     }
+
+    if (rolls.length === 0 && session.id !== null) {
+      rollActions.loadRolls(session.id).catch(error => {
+        console.log("Loading rolls failed " + error);
+        alert("loading rolls failed" + error);
+      });
+    }
   }, [props.session]);
+
+  function sortRollsByDateRolled(a, b) {
+    if (a.rolledDate > b.rolledDate) {
+      return -1;
+    }
+    if (a.rolledDate < b.rolledDate) {
+      return 1;
+    }
+    return 0;
+  }
 
   return sessions.length === 0 || players.length === 0 ? (
     <Spinner />
@@ -95,30 +121,25 @@ function ShowSessionPage(props) {
           <div className="card">
             <div className="card-body">
               <ul>
-                <li>
-                  <h6>
-                    <mark>Max</mark> rolled 4d10 (<strong>4,8,1,6</strong>) and
-                    sum is: <strong>19</strong>. Max value was:{" "}
-                    <font color="blue">8</font> and Min value was:{" "}
-                    <font color="red">1</font>
-                  </h6>
-                </li>
-                <li>
-                  <h6>
-                    <mark>Max</mark> rolled 3d6+2 (<strong>2,3,5</strong>) and
-                    sum is: <strong>12</strong>. Max value was:{" "}
-                    <font color="blue">5</font> and Min value was:{" "}
-                    <font color="red">2</font>
-                  </h6>
-                </li>
-                <li>
-                  <h6>
-                    <mark>Bergson</mark> rolled 3d4 (<strong>1,2,4</strong>) and
-                    sum is: <strong>7</strong>. Max value was:{" "}
-                    <font color="blue">4</font> and Min value was:{" "}
-                    <font color="red">1</font>
-                  </h6>
-                </li>
+                {rolls.sort(sortRollsByDateRolled).map(roll => {
+                  return (
+                    <li key={roll.id} className="mb-1">
+                      <mark>{getPlayerById(players, roll.playerId).name}</mark>{" "}
+                      rolled {roll.quantity}d{roll.dieFace}
+                      {roll.bonusIncrement >= 0
+                        ? `${
+                            roll.bonusIncrement == 0
+                              ? ""
+                              : `+${roll.bonusIncrement}`
+                          }`
+                        : `${roll.bonusIncrement}`}{" "}
+                      (<strong>{roll.rolledDice.join(", ")}</strong>) and sum
+                      is: <strong>{roll.sum}</strong>. Max value was:{" "}
+                      <font color="blue">{roll.maxValue}</font> and Min value
+                      was: <font color="red">{roll.minValue}</font>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </div>
@@ -131,9 +152,11 @@ function ShowSessionPage(props) {
 ShowSessionPage.propTypes = {
   sessionActions: PropTypes.object.isRequired,
   playerActions: PropTypes.object.isRequired,
+  rollActions: PropTypes.object.isRequired,
   session: PropTypes.object.isRequired,
   sessions: PropTypes.array.isRequired,
-  players: PropTypes.array.isRequired
+  players: PropTypes.array.isRequired,
+  rolls: PropTypes.array.isRequired
 };
 
 export function getSessionById(sessions, id) {
@@ -157,13 +180,15 @@ function mapStateToProps(state, ownProps) {
   return {
     sessions: state.sessions,
     session: session,
-    players: state.players
+    players: state.players,
+    rolls: state.rolls
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     sessionActions: bindActionCreators(sessionActions, dispatch),
+    rollActions: bindActionCreators(rollActions, dispatch),
     playerActions: bindActionCreators(playerActions, dispatch)
   };
 }

@@ -20,6 +20,8 @@ function SessionRunPage(props) {
 
   const [session, setSession] = useState({ ...props.session });
   const [playerSelected, setPlayerSelected] = useState(0);
+  const [rollForm, setRollForm] = useState({});
+  const [errors, setErrors] = useState({});
 
   const intervalRef = useRef();
 
@@ -55,22 +57,35 @@ function SessionRunPage(props) {
     };
   }, [props.session]);
 
-  function handlePlayerSelectionDefault(e) {
+  function handleChangeRollForm(e) {
     setPlayerSelected(e.target.value);
+    const { name, value } = e.target;
+    setRollForm(prevRollForm => ({
+      ...prevRollForm,
+      [name]: value
+    }));
+  }
+
+  function formIsValid() {
+    const { playerId, dieFace, quantity } = rollForm;
+    const errors = {};
+    if (!playerId) errors.playerId = "An player must be selected";
+    if (!dieFace) errors.dieFace = "An die face must be selected";
+    if (!quantity) errors.quantity = "A quantity must be declared";
+
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
   }
 
   function handleRollSubmit(e) {
     e.preventDefault();
-    //if (!formIsValid()) return;
-    const roll1 = {
-      dieFace: 10,
-      quantity: 3,
-      bonusIncrement: -5,
-      playerId: 1,
-      sessionId: 4
-    };
-    console.log(props);
-    rollActions.saveRoll(roll1).then(() => {
+    if (!formIsValid()) return;
+
+    const newRoll = !rollForm.bonusIncrement
+      ? { ...rollForm, sessionId: session.id, bonusIncrement: "0" }
+      : { ...rollForm, sessionId: session.id };
+
+    rollActions.saveRoll(newRoll).then(() => {
       toast.success("Dice rolled!");
       rollActions.loadRolls(session.id).catch(error => {
         alert("loading rolls failed" + error);
@@ -108,59 +123,78 @@ function SessionRunPage(props) {
       <div className="card">
         <div className="card-body">
           <form className="form-inline" onSubmit={handleRollSubmit}>
-            <label className="my-1 mr-2" htmlFor="inlineFormCustomSelectPref">
-              Player {playerSelected}
+            <label className="my-1 mr-2" htmlFor="rollFormPlayer">
+              Player
             </label>
             <select
               className="custom-select my-1 mr-sm-2"
-              id="inlineFormCustomSelectPref"
+              name="playerId"
+              id="rollFormPlayer"
               defaultValue={playerSelected}
-              onChange={handlePlayerSelectionDefault}
+              onChange={handleChangeRollForm}
             >
               <option value="0">Choose...</option>
-              <option value="1">Max</option>
-              <option value="2">Bergson</option>
-              <option value="3">Bahia</option>
-              <option value="4">Walker</option>
-              <option value="5">Jânio</option>
-              <option value="6">Pedro</option>
+              {session.players.map(playerId => {
+                return (
+                  <option key={playerId} value={playerId}>
+                    {getPlayerById(players, playerId).name}
+                  </option>
+                );
+              })}
             </select>
-            <label className="my-1 mr-2" htmlFor="inlineFormCustomSelectPref2">
-              Dice
+            <label className="my-1 mr-2" htmlFor="rollFormDie">
+              Die
             </label>
             <select
               className="custom-select my-1 mr-sm-2"
-              id="inlineFormCustomSelectPref2"
+              name="dieFace"
+              id="rollFormDie"
+              onChange={handleChangeRollForm}
             >
               <option defaultValue>Choose...</option>
-              <option value="1">d3</option>
-              <option value="2">d4</option>
-              <option value="3">d6</option>
-              <option value="4">d8</option>
-              <option value="5">d10</option>
-              <option value="6">d12</option>
+              <option value="3">d3</option>
+              <option value="4">d4</option>
+              <option value="6">d6</option>
+              <option value="8">d8</option>
+              <option value="10">d10</option>
+              <option value="12">d12</option>
+              <option value="20">d20</option>
+              <option value="100">d100</option>
             </select>
-            <label className="sr-only" htmlFor="inlineFormInputName2">
+            <label className="sr-only" htmlFor="rollFormQty">
               Qty
             </label>
             <input
               type="text"
+              name="quantity"
               className="form-control form-control-sm mr-2"
-              id="inlineFormInputName2"
+              id="rollFormQty"
               placeholder="Qty"
+              onChange={handleChangeRollForm}
             />
-            <label className="sr-only" htmlFor="inlineFormInputName3">
+            <label className="sr-only" htmlFor="rollFormBonus">
               Bonus/Penalty
             </label>
             <input
               type="text"
               className="form-control form-control-sm mr-2"
-              id="inlineFormInputName3"
+              name="bonusIncrement"
+              id="rollFormBonus"
               placeholder="Bonus/Penalty"
+              onChange={handleChangeRollForm}
             />
             <button type="submit" className="btn btn-primary">
               Roll!
             </button>
+            {errors.playerId && (
+              <div className="alert alert-danger">{errors.playerId}</div>
+            )}
+            {errors.dieFace && (
+              <div className="alert alert-danger">{errors.dieFace}</div>
+            )}
+            {errors.quantity && (
+              <div className="alert alert-danger">{errors.quantity}</div>
+            )}
           </form>
         </div>
       </div>
@@ -174,9 +208,16 @@ function SessionRunPage(props) {
                   return (
                     <li key={roll.id} className="mb-1">
                       <mark>{getPlayerById(players, roll.playerId).name}</mark>{" "}
-                      rolled {roll.quantity}d{roll.dieFace} (
-                      <strong>{roll.rolledDice.join(", ")}</strong>) and sum is:{" "}
-                      <strong>{roll.sum}</strong>. Max value was:{" "}
+                      rolled {roll.quantity}d{roll.dieFace}
+                      {roll.bonusIncrement >= 0
+                        ? `${
+                            roll.bonusIncrement == 0
+                              ? ""
+                              : `+${roll.bonusIncrement}`
+                          }`
+                        : `${roll.bonusIncrement}`}{" "}
+                      (<strong>{roll.rolledDice.join(", ")}</strong>) and sum
+                      is: <strong>{roll.sum}</strong>. Max value was:{" "}
                       <font color="blue">{roll.maxValue}</font> and Min value
                       was: <font color="red">{roll.minValue}</font>
                     </li>
@@ -212,7 +253,6 @@ export function getPlayerById(players, id) {
 }
 
 function mapStateToProps(state, ownProps) {
-  console.log(state);
   const id = ownProps.match.params.id;
 
   const newSession = {

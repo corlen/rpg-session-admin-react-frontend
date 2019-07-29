@@ -8,7 +8,6 @@ export function getRollsBySession(sessionId) {
 }
 
 export function saveRoll(roll) {
-  console.log("como é passado pra api", JSON.stringify(roll));
   return fetch(baseUrl, {
     method: "POST",
     headers: { "content-type": "application/json" },

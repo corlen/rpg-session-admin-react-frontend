@@ -14,7 +14,6 @@ export function getSession(id) {
 }
 
 export function saveSession(session) {
-  console.log("como é passado pra api", JSON.stringify(session));
   return fetch(baseUrl, {
     method: "POST",
     headers: { "content-type": "application/json" },
