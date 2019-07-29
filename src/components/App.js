@@ -9,7 +9,7 @@ import SessionsPage from "./sessions/SessionsPage";
 import ShowSessionPage from "./sessions/ShowSessionPage";
 import ManagePlayerPage from "./players/ManagePlayerPage";
 import ManageSessionPage from "./sessions/ManageSessionPage";
-import SessionRunPage from "./sessions/SessionRunPage";
+import SessionRunPage from "./play/SessionRunPage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
