@@ -26,7 +26,6 @@ export function loadSessions() {
 }
 
 export function saveSession(session) {
-  console.log("antes de ir pra chamada na api", session);
   //eslint-disable-next-line no-unused-vars
   return function(dispatch, getState) {
     dispatch(beginApiCall());

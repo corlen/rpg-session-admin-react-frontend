@@ -29,7 +29,6 @@ function SessionRunPage(props) {
     if (sessions.length === 0) {
       sessionActions.loadSessions().catch(error => {
         console.log("Loading sessions failed " + error);
-        alert("Loading sessions failed");
       });
     } else {
       setSession({ ...props.session });
@@ -37,18 +36,18 @@ function SessionRunPage(props) {
 
     if (players.length === 0) {
       playerActions.loadPlayers().catch(error => {
-        alert("loading players failed" + error);
+        console.log("Loading players failed " + error);
       });
     }
     if (rolls.length === 0 && session.id !== null) {
       rollActions.loadRolls(session.id).catch(error => {
-        alert("loading rolls failed" + error);
+        console.log("Loading rolls failed " + error);
       });
     }
 
     const polling = setInterval(() => {
       rollActions.loadRolls(session.id).catch(error => {
-        alert("loading rolls failed" + error);
+        console.log("Loading rolls failed " + error);
       });
     }, 4000);
     intervalRef.current = polling;
@@ -88,7 +87,7 @@ function SessionRunPage(props) {
     rollActions.saveRoll(newRoll).then(() => {
       toast.success("Dice rolled!");
       rollActions.loadRolls(session.id).catch(error => {
-        alert("loading rolls failed" + error);
+        console.log("Loading rolls failed " + error);
       });
     });
   }

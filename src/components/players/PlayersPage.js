@@ -18,7 +18,6 @@ class PlayersPage extends React.Component {
     if (players.length === 0) {
       actions.loadPlayers().catch(error => {
         console.log("Loading players failed " + error);
-        alert("Loading players failed");
       });
     }
   }

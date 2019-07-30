@@ -23,7 +23,6 @@ function ShowSessionPage(props) {
     if (sessions.length === 0) {
       sessionActions.loadSessions().catch(error => {
         console.log("Loading sessions failed " + error);
-        alert("Loading sessions failed");
       });
     } else {
       setSession({ ...props.session });
@@ -32,14 +31,12 @@ function ShowSessionPage(props) {
     if (players.length === 0) {
       playerActions.loadPlayers().catch(error => {
         console.log("Loading players failed " + error);
-        alert("loading players failed" + error);
       });
     }
 
     if (rolls.length === 0 && session.id !== null) {
       rollActions.loadRolls(session.id).catch(error => {
         console.log("Loading rolls failed " + error);
-        alert("loading rolls failed" + error);
       });
     }
   }, [props.session]);

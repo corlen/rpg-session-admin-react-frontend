@@ -18,7 +18,6 @@ function ManageSessionPage(props) {
     if (sessions.length === 0) {
       sessionActions.loadSessions().catch(error => {
         console.log("Loading sessions failed " + error);
-        alert("Loading sessions failed");
       });
     } else {
       setSession({ ...props.session });
@@ -26,10 +25,10 @@ function ManageSessionPage(props) {
 
     if (players.length === 0) {
       playerActions.loadPlayers().catch(error => {
-        alert("loading players failed" + error);
+        console.log("loading players failed" + error);
       });
     }
-  }, [props.session]);
+  }, []);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -53,7 +52,6 @@ function ManageSessionPage(props) {
   function formIsValid() {
     const { description, players } = session;
     const errors = {};
-    console.log(session);
     if (!description) errors.description = "Description is required";
     if (!players.length > 0) errors.players = "At least one player is required";
 
@@ -65,7 +63,6 @@ function ManageSessionPage(props) {
     event.preventDefault();
     if (!formIsValid()) return;
     setSaving(true);
-    console.log("antes de ir pra action", session);
     sessionActions
       .saveSession(session)
       .then(() => {

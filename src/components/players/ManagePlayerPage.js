@@ -17,12 +17,11 @@ function ManagePlayerPage(props) {
     if (players.length === 0) {
       actions.loadPlayers().catch(error => {
         console.log("Loading players failed " + error);
-        alert("Loading players failed");
       });
     } else {
       setPlayer({ ...props.player });
     }
-  }, [props.player]);
+  }, []);
 
   function handleChange(event) {
     const { name, value } = event.target;

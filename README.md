@@ -5,7 +5,7 @@
 1. Put a list of dice permited in specific session.
 2. Authentication.
 3. Refactory play page
-4. Production configuration
+4. Bug: when deletes a player, sessions page stop to work.
 
 ### Production Dependencies
 

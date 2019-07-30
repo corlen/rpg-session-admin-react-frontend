@@ -2,7 +2,9 @@
   "name": "rpg-session-admin-react",
   "description": "Rpg session administration, a place to roll dice and play rpg with players remotely separated",
   "scripts": {
-    "start": "webpack-dev-server --config webpack.config.dev.js --port 3000"
+    "start": "webpack-dev-server --config webpack.config.dev.js --port 3000",
+    "prebuild": "rimraf ./build && mkdir build",
+    "build": "webpack --config webpack.config.prod.js"
   },
   "dependencies": {
     "bootstrap": "4.3.1",

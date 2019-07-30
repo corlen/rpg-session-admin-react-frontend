@@ -17,7 +17,6 @@ class SessionsPage extends React.Component {
     if (sessions.length === 0) {
       actions.loadSessions().catch(error => {
         console.log("Loading sessions failed " + error);
-        alert("Loading sessions failed");
       });
     }
   }
