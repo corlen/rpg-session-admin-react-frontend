@@ -1,0 +1,26 @@
+# This workflow will build and deploy a docker container to AWS Fargate.
+
+name: Manual release from a tag (alternative version)
+run-name: Release tag ${{ github.event.release.tag_name }} by @${{ github.actor }}
+
+on:
+  workflow_dispatch:
+#  release:
+#    types: [published]
+
+jobs:
+  publish:
+    name: Publish release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: refs/tags/${{ inputs.tag }}
+      - name: Publish release
+        uses: ghalactic/github-release-from-tag@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
